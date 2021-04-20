@@ -65,26 +65,34 @@
 
 
     <script>
-    // fetch('http://127.0.0.1:3000/blockchain').then(function(response) {
-    //     return response.json();
-    // }).then(function(json) {
-    //     let products = json;
-    //     initialize(products);
+    fetch('http://127.0.0.1:3000/blockchain').then(function(response) {
+        var nm = response.json();
+            console.log(nm);
+    }).then(function(json) {
+        let products = json;
+        consol.log(initialize(products));
     
     
-    // }).catch(function(err) {
-    //     console.log('Fetch problem: ' + err.message);
-    // });
-
-
-
-
+    }).catch(function(err) {
+        console.log('Fetch problem: ' + err.message);
+    });
+              
+        
     </script>
 
 
 
 
+<?php
+                    // date_default_timezone_set('Asia/Kolkata'); 
+                    // $Lat = print '<script> Lat </script>';
+                    // $Long = print '<script> Long </script>';
+                    // $date = date('y/m/d');
+                    // $time = date('h:i:s');
 
+                    // $q = mysqli_query($conn, "INSERT INTO locations (card_no, src_lat, src_lon, mobile_lat, mobile_lon,T_Date,T_Time) VALUES ('".$cardno."', '".$Lat."', '".$Long."', '".$m_lat."', '".$m_lon."', '".$date."', '".$time ."',)");
+
+                    ?>
 
 
 

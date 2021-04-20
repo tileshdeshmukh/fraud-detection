@@ -11,15 +11,15 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    
+
     <script src="https://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
-    
+
     <!-- card css -->
     <link rel="stylesheet" type="text/css" href="card_style.css">
     <title>Payment</title>
-   
+
     <style>
     .imgbg {
         position: relative;
@@ -88,11 +88,19 @@
                         </button>
                     </div>
                     <div>
-                        
+
                         <p class="text-danger" role="alert" id="demo"></p>
                     </div>
                 </form>
-                
+
+
+
+
+
+
+
+
+
                 <!-- Get current platform Location script -->
                 <script type="text/javascript">
                 var x = document.getElementById("demo");
@@ -106,13 +114,27 @@
                 }
                 // end current location script
 
+
+
+
+
+
+
                 // get lat long data releted to card number
                 <?php 
-                  $cardno = $_POST['cno']; 
+                  $cardno = $_POST['cno'];  
                   $q = mysqli_query($conn, "select * from bank where card_no='$cardno'");
                   $user = mysqli_fetch_assoc($q);
+                  $name = $user['name'];
+                  $m_lat = $user['lat'];
+                  $m_lon = $user['lon'];
                  ?>
                 // end
+
+
+
+
+
                 // Match two location
                 var showPosition = function(position) {
                     var Lat = position.coords.latitude;
@@ -127,11 +149,30 @@
                         dist
                     })
                     // Only 20 meter distance valide transaction
+                
+              
+
+
                     if (dist <= 0.021)
 
                     {
+
+                        //create new block inside the blockchain
+                        var request = new XMLHttpRequest()
+                        request.open("GET",
+                            "http://localhost:3000/transaction/<?php echo $_GET['amo']; ?>/<?php echo $name; ?>/admin",
+                            true)
+
+                        var re = request.send()
+                        // console.log(block)
+
+                        request.onreadystatechange = (e) => {
+                            console.log(Http.responseText)
+                        }
+                        //end
+
                         window.location.href =
-                            "http://localhost/project2020/number.php?cno=<?php echo $_POST['cno']; ?>&amo=<?php echo $amo; ?>";
+                            "http://localhost/project2020/contract.php?cno=<?php echo $_POST['cno']; ?>&amo=<?php echo $amo;?>&status=<?php echo 'match';?>";
 
                     } else {
 
@@ -140,8 +181,8 @@
                             "location does not match Please Wait for allowe to Trasanction...");
                         if (allowe) {
 
-                            window.location.href =
-                            "http://localhost/project2020/my_device.php?no=8308283380&conf=1";
+                            // window.location.href =
+                            //     "http://localhost/project2020/my_device.php?no=8308283380&conf=1";
 
 
                             //  Send SMS code
@@ -223,6 +264,9 @@
                           
 
                         echo "<script>getLocation();</script>";
+                   
+                   
+                 
                       }
                     ?>
 
