@@ -1,6 +1,8 @@
 <?php
     include('db.php');
-    $cardno = trim($_GET['cno']);
+    $cno = base64_decode($_GET['cno']);
+    $amo = base64_decode($_GET['amo']);
+    $cardno = trim($cno);
     $loc_status = trim($_GET['status']);
 
                             
@@ -15,11 +17,11 @@
                                  
 
                                     //<!-- Payment transfer -->
-            $current_balance = $data['balance'];
-            $transf_balance = $_GET['amo'];
-            $mobil_b = $data['mobile'];
-            $name = $data['name'];
-            $acount = $data['acoun_no'];
+             $current_balance = $data['balance'];
+             $transf_balance = $amo;
+            // $mobil_b = $data['mobile'];
+            // $name = $data['name'];
+            // $acount = $data['acoun_no'];
             //cut balance
             $new_balance = $current_balance - $transf_balance;
                                     
@@ -75,7 +77,7 @@
                     //Pending Block Delete code
                 }
             }                      
-            // header('Location:http://localhost/project2020/home.php?amo='.$_GET['amo']);
+            // header('Location:http://localhost/project2020/home.php?amo='.$amo);
                                         
         }
             // End Payment Transaction                                          

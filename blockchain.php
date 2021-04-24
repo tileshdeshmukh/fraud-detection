@@ -1,3 +1,16 @@
+<?php
+    $response = file_get_contents('http://127.0.0.1:3000/blockchain');
+                    
+    $blocks = json_decode($response);
+    
+    //echo $blocks->chain[0]->index;
+    $chains = count($blocks->chain);
+    $pending = count($blocks->pendingTransactions);
+?>
+
+
+
+
 <!doctype html>
 <html lang="en">
 
@@ -11,88 +24,148 @@
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 
     <title>Blockchain</title>
+
+    <style>
+
+    </style>
 </head>
 
-<body>
+<body class="pt-5">
 
-    <!--  <section style="margin:50px;">
-        <div class="container">
-            <h2>Blockchain</h2>
-            <hr>
-            <div class="" style="margin:30px;">
 
-                <table class="table-striped border-success">
-                    <thead>
-                        <tr>
-                            <th data-field="id">
-                                <span class="text-dark">
-                                    Index ID
-                                </span>
-                            </th>
-                            <th data-field="name">
-                                <span class="text-dark">
-                                    Timestamp
-                                </span>
-                            </th>
-                            <th data-field="date">
-                                <span class="text-dark">
-                                    PrevBlockHash
-                                </span>
-                            </th>
-                            <th data-field="date">
-                                <span class="text-dark">
-                                    Transaction
-                                </span>
-                            </th>
-                            <th data-field="date">
-                                <span class="text-dark">
-                                    Hash
-                                </span>
-                            </th>
-                            <th data-field="date">
-                                <span class="text-dark">
-                                    Status
-                                </span>
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
+    <div class="container">
+        <h2>Blockchain</h2>
+        <h5>Pending Transactions : <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                <?php echo $pending ?>
+            </button></a></h5>
+        <hr>
+        <div class="row">
+            <?php               
+                    for($i=1; $i<$chains; $i++){
+                        
+             ?>
+            <div class="col-lg-3 col-lg-3col-sm-10 p-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Block :<samp
+                                class="text-primary text-lg"><?php echo $blocks->chain[$i]->index ?></samp></h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Timestamp: <span
+                                class="text-primary"><?php echo $blocks->chain[$i]->timestamp ?></span> </h6>
+                        <hr>
+                        <p class="card-text">PreviuosHash: <span
+                                class="text-danger"><?php echo $blocks->chain[$i]->prevBlockHash ?></p>
+                        <?php
+                            if($i == 0)
+                            { 
+                            ?>
+                        <td scope="row"><?php echo '--' ?></td>
+                        <td scope="row"><?php echo '--' ?></td>
+                        <?php
+                            }
+                            else
+                            {
+                            
+                            $tran = count($blocks->chain[$i]->transactions);
+                            for($t=0; $t<$tran;$t++)
+                            {
+                                if($tran == 1)
+                                {
+                                ?>
+                        <p>Amount : <span class="text-primary"><?php echo $blocks->chain[$i]->transactions[0]->amount ?>
+                            </span></p>
+                        <p>Sender : <span class="text-primary"><?php echo $blocks->chain[$i]->transactions[0]->sender ?>
+                            </span></p>
+                                    
+                                <?php 
+                                
+                                }
+                                else{ ?>
+
+                                    <p>Amount : <span class="text-primary"><?php echo $blocks->chain[$i]->transactions[$t]->amount ?>
+                                    </span></p>
+                                <p>Sender : <span class="text-primary"><?php echo $blocks->chain[$i]->transactions[$t]->sender ?>
+                                    </span></p>
+                                    
+                                    <?php
+                                }
+                            }
+                                
+                                ?>
+
+                        <?php } ?>
+                        <hr>
+                        <p class="">Hash : </p><spam class="text-success"><?php echo $blocks->chain[$i]->hash ?></spam>
+                        
+
+
+                    </div>
+                </div>
 
             </div>
-        </div> 
-    </section> -->
-
-
-
-    <script>
-    fetch('http://127.0.0.1:3000/blockchain').then(function(response) {
-        var nm = response.json();
-            console.log(nm);
-    }).then(function(json) {
-        let products = json;
-        consol.log(initialize(products));
-    
-    
-    }).catch(function(err) {
-        console.log('Fetch problem: ' + err.message);
-    });
-              
-        
-    </script>
-
-
-
-
-<?php
-                    // date_default_timezone_set('Asia/Kolkata'); 
-                    // $Lat = print '<script> Lat </script>';
-                    // $Long = print '<script> Long </script>';
-                    // $date = date('y/m/d');
-                    // $time = date('h:i:s');
-
-                    // $q = mysqli_query($conn, "INSERT INTO locations (card_no, src_lat, src_lon, mobile_lat, mobile_lon,T_Date,T_Time) VALUES ('".$cardno."', '".$Lat."', '".$Long."', '".$m_lat."', '".$m_lon."', '".$date."', '".$time ."',)");
-
+            <?php
+                    }
                     ?>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Pending Transactions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="row">
+            <?php               
+                   
+                   for($j=0; $j<$pending; $j++){
+                        
+             ?>
+
+                    <div class="col-auto ">
+                        <div class="card mb-2" style="">
+                            <div class="card-body">
+                                <h5 class="card-title">Block :<samp
+                                        class="text-primary text-lg"><?php echo $j ?></samp>
+                                </h5>
+
+
+                                <p>Amount : <span class="text-primary"><?php echo $blocks->pendingTransactions[$j]->amount ?>
+                                    </span></p>
+                                <p>Sender : <span class="text-primary"><?php echo $blocks->pendingTransactions[$j]->sender ?>
+                                    </span></p>
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+<?php } ?>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

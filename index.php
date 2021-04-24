@@ -62,7 +62,7 @@
                     <div>
 
                         <div>
-                            <a class="" href="admin.php"> Admin </a> &nbsp <a class="" href="login.php">User Acount</a>&nbsp <a class="" href="mob_log.php">My Device</a>
+                            <a class="" href="admin.php"> Admin </a> &nbsp <a class="" href="login.php">User Acount</a>&nbsp <a class="" href="mob_log.php">My Device</a>  &nbsp <a class="" href="blockchain.php">Blockchain</a>
                         </div>
 
             </form>
@@ -73,9 +73,10 @@
     <?php
 if(isset($_POST['btn']))
 {
-    $amo = $_POST['amount'];
-
-    header("location:home.php?amo=$amo");
+    $amo = base64_encode($_POST['amount']);
+    //$enc_amo = (($amo*1234*5678)/910);
+    
+    header("location:home.php?amo=".$amo);
 }
 
 

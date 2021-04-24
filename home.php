@@ -1,6 +1,13 @@
 <?php
-  include('db.php');
+    include('db.php');
+    $data = $_GET['amo'];  
+    $amo = base64_decode($data);
 ?>
+
+
+
+<!-- HTML Code ---------------------------------------------------------------------------------------------- -->
+
 <!doctype html>
 <html lang="en">
 
@@ -31,7 +38,7 @@
 
     <div class="container pt-5 mt-5">
         <h1> Payment Information </h1>
-        <h6>Transfer Amount Rs.<spam class="text-primary"><?php  echo $_GET['amo']; ?>/-</spam>
+        <h6>Transfer Amount Rs.<spam class="text-primary"><?php  echo $amo ?>/-</spam>
         </h6>
         <hr>
         <div class="row" ng-app="">
@@ -53,7 +60,7 @@
             </div>
             <div class="col-6 col-sm-6">
                 <!-- Get The amount to transfer -->
-                <?php $amo = $_GET['amo']; ?>
+
                 <!-- End -->
                 <form method="post" action="">
                     <div class="form-group">
@@ -96,101 +103,123 @@
 
 
 
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- HTML END ---------------------------------------------------------------------------------------- -->
+
+
+
+    <!-- Get current platform Location script ---------------------------------------------------------------->
+
+    <script type="text/javascript">
+    var x = document.getElementById("demo");
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    // end current location script ----------------------------------------------------------------------------
 
 
 
 
 
-                <!-- Get current platform Location script -->
-                <script type="text/javascript">
-                var x = document.getElementById("demo");
+    // Match two location ---------------------------------------------------------------------------
 
-                function getLocation() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(showPosition);
-                    } else {
-                        x.innerHTML = "Geolocation is not supported by this browser.";
-                    }
-                }
-                // end current location script
+    var showPosition = function(position) {
+        var Lat = position.coords.latitude;
+        var Long = position.coords.longitude;
+        console.log({
+            Lat,
+            Long
+        })
 
 
 
-
-
-
-
-                // get lat long data releted to card number
-                <?php 
+        // get lat long data releted to card number mobile ------------------------------------------------------------
+        <?php 
                   $cardno = $_POST['cno'];  
                   $q = mysqli_query($conn, "select * from bank where card_no='$cardno'");
                   $user = mysqli_fetch_assoc($q);
                   $name = $user['name'];
                   $m_lat = $user['lat'];
                   $m_lon = $user['lon'];
-                 ?>
-                // end
+        ?>
+        // end ------------------------------------------------------------------------------------
 
 
 
 
 
-                // Match two location
-                var showPosition = function(position) {
-                    var Lat = position.coords.latitude;
-                    var Long = position.coords.longitude;
-                    console.log({
-                        Lat,
-                        Long
-                    })
-                    // call function
-                    const dist = calcCrow(<?php echo $user['lat'];?>, <?php echo $user['lon'];?>, Lat, Long)
-                    console.log({
-                        dist
-                    })
-                    // Only 20 meter distance valide transaction
+
+
+        // call function to calculate Distance------------------------------------------------------------------------------
+
+        const dist = calcCrow(<?php echo $user['lat'];?>, <?php echo $user['lon'];?>, Lat, Long)
+        console.log({
+            dist
+        })
+
+
+
+
+
+        // Only 20 meter distance valide transaction ------------------------------------------------------
+
+        if (dist <= 0.021) {
+            // create new block inside the blockchain
+            const b = block();
+            //end
+
+            window.location.href =
+                "http://localhost/project2020/contract.php?cno=<?php echo base64_encode($_POST['cno']); ?>&amo=<?php echo base64_encode($amo);?>&status=<?php echo 'match';?>";
+
+        } else {
+
+            var w = 0;
+            const allowe = window.confirm(
+                "location does not match Please Wait for allowe to Trasanction...");
+           
+           
+           
+            if (allowe) {
+                //send the alert sms to user mobile
+                window.location.href =
+                "http://localhost/project2020/confirm.php?cno=<?php echo base64_encode($_POST['cno']);?>&amo=<?php echo base64_encode($amo);?>";
                 
-              
+           
+           
+           
+           
+           
+           
+            }
+            else
+            {
+                window.location.href =
+                "http://localhost/project2020/index.php";
+
+            }
+           
+
+                     
+
+                                
+                 
+                   
+
+                //  window.location.href =
+                //          "http://localhost/project2020/my_device.php?no=8308283380&conf=1";
 
 
-                    if (dist <= 0.021)
-
-                    {
-
-                        //create new block inside the blockchain
-                        var request = new XMLHttpRequest()
-                        request.open("GET",
-                            "http://localhost:3000/transaction/<?php echo $_GET['amo']; ?>/<?php echo $name; ?>/admin",
-                            true)
-
-                        var re = request.send()
-                        // console.log(block)
-
-                        request.onreadystatechange = (e) => {
-                            console.log(Http.responseText)
-                        }
-                        //end
-
-                        window.location.href =
-                            "http://localhost/project2020/contract.php?cno=<?php echo $_POST['cno']; ?>&amo=<?php echo $amo;?>&status=<?php echo 'match';?>";
-
-                    } else {
-
-
-                        var allowe = window.confirm(
-                            "location does not match Please Wait for allowe to Trasanction...");
-                        if (allowe) {
-
-                            // window.location.href =
-                            //     "http://localhost/project2020/my_device.php?no=8308283380&conf=1";
-
-
-                            //  Send SMS code
-
-
-
-
-                            <?php 
+                //  Send SMS code---------------------------------------------------------------------------
+                <?php 
                             // $fields = array(
                             //     "message" => "You allowe to transaction click <a href='http://localhost/project2020/comfirmation.php'>here</a>",
                             //     "language" => "english",
@@ -226,40 +255,71 @@
 
 
                         ?>
-                            // MSM Code END
-                            // window.location.href = "http://localhost/project2020/login.php";
-                        }
+                // MSM Code END ------------------------------------------------------------------------------
+
+
+                // window.location.href = "http://localhost/project2020/login.php";
+            
 
 
 
 
-                    }
+        }
 
 
 
-                }
-                //distance calculate function
-                function calcCrow(lat1, lon1, lat2, lon2) {
-                    var R = 6371; // km
-                    var dLat = toRad(lat2 - lat1);
-                    var dLon = toRad(lon2 - lon1);
-                    var lat1 = toRad(lat1);
-                    var lat2 = toRad(lat2);
+    }
 
-                    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                    var d = R * c;
-                    return d;
-                }
 
-                // Converts numeric degrees to radians
-                function toRad(Value) {
-                    return Value * Math.PI / 180;
-                }
-                </script>
-                <!-- Fun Begins Here -->
-                <?php
+    //distance calculate function -------------------------------------------------------------------------
+
+    function calcCrow(lat1, lon1, lat2, lon2) {
+        var R = 6371; // km
+        var dLat = toRad(lat2 - lat1);
+        var dLon = toRad(lon2 - lon1);
+        var lat1 = toRad(lat1);
+        var lat2 = toRad(lat2);
+
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d;
+    }
+
+
+
+
+    // Converts numeric degrees to radians -------------------------------------------------------------------
+    function toRad(Value) {
+        return Value * Math.PI / 180;
+    }
+
+    //block creater code -----------------------------------------------------------------------------------
+
+    function block() {
+        var request = new XMLHttpRequest()
+        request.open("GET",
+            "http://127.0.0.1:3000/transaction/<?php echo $amo ;?>/<?php echo $name ;?>/Admin",
+            true)
+
+        // $response = file_get_contents('http://127.0.0.1:3000/transaction/10/til/a');
+        // $response = json_decode($response);
+
+
+        var re = request.send()
+
+        request.onreadystatechange = (e) => {}
+    }
+    </script>
+
+
+
+
+
+
+    <!-- Fun Begins Here ---------------------------------------------------------------------------------- -->
+    <?php
                       if(isset($_POST['Payment'])){
                           
 
@@ -270,36 +330,10 @@
                       }
                     ?>
 
-            </div>
-        </div>
-    </div>
-    </div>
 
 
-    <?php
-  /*  if(isset($_POST['Payment']))
-    {
-    	$username = "crack.t2111@gmail.com";
-	$hash = "47fbbdbd42e2ff048523420d52b8062d8ab784ce744e1970876bccdb3c7d8833";
-	// Config variables. Consult http://api.textlocal.in/docs for more info.
-	$test = "0";
-	// Data for text message. This is the text message data.
-	$sender = "TXTLCL"; // This is who the message appears to be from.
-	$numbers = "8308283380"; // A single number or a comma-seperated list of numbers
-	$message = "https://192.168.43.28/cust_location.php";
-	// 612 chars or less
-	// A single number or a comma-seperated list of numbers
-	$message = urlencode($message);
-	$data = "username=".$username."&hash=".$hash."&message=".$message."&sender=".$sender."&numbers=".$numbers."&test=".$test;
-	$ch = curl_init('http://api.textlocal.in/send/?');
-	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch); // This is the result from the API
-	curl_close($ch);
-    }
-*/
-?>
+
+
 
     <script src="map.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
